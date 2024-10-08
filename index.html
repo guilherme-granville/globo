@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planeta Terra 3D Interativo</title>
+  <style>
+    body { 
+      margin: 0; 
+      overflow: hidden; 
+      position: relative; 
+    }
+    canvas { 
+      display: block;
+      position: absolute;
+      top: 47px;
+      left: 100px; 
+      width: 216px !important; 
+      height: 216px !important;
+      rotate: -29deg;
+      cursor: grab;
+    }
+    canvas:active { cursor: grabbing; }
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 384px !important;
+    }
+  </style>
+</head>
+<body>
+  <img src="https://img.freepik.com/fotos-premium/suporte-de-globo-terrestre-preto-sobre-um-fundo-branco-renderizacao-3d_476612-2920.jpg" alt="">
+  <canvas id="webgl-canvas"></canvas>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    const canvas = document.getElementById('webgl-canvas');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, 422 / 422, 0.1, 1000);
+
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+    renderer.setSize(422, 422);
+
+    renderer.setClearColor(0x000000, 0);
+
+    const textureLoader = new THREE.TextureLoader();
+    const earthTexture = textureLoader.load('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/e6059863-37fa-4986-9b43-0a116285360b/d4p5ydm-dc546360-e314-4eb3-876a-b216bbf509ea.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2U2MDU5ODYzLTM3ZmEtNDk4Ni05YjQzLTBhMTE2Mjg1MzYwYlwvZDRwNXlkbS1kYzU0NjM2MC1lMzE0LTRlYjMtODc2YS1iMjE2YmJmNTA5ZWEucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.0gSfgUiNtZR8nOyfLCxCNoQJ81gmrpMVprliv-RWT-4');
+
+    const radius = 3;
+    const geometry = new THREE.SphereGeometry(radius, 32, 32);
+    const material = new THREE.MeshBasicMaterial({ map: earthTexture });
+    const earth = new THREE.Mesh(geometry, material);
+    scene.add(earth);
+
+    camera.position.z = radius + 2;
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      earth.rotation.y += 0.002;
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; 
+    controls.dampingFactor = 0.25;
+    controls.enableZoom = false;
+    controls.panSpeed = 0;
+
+    controls.maxPolarAngle = Math.PI / 2;
+    controls.minPolarAngle = Math.PI / 2;
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      renderer.setSize(422, 422);
+      camera.aspect = 422 / 422;
+      camera.updateProjectionMatrix();
+    });
+  </script>
+</body>
+</html>
